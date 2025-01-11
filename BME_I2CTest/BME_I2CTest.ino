@@ -20,6 +20,7 @@
 #include <TinyBME280.h>
 
 void setup() {
+  
   // Runs once at start or board reset
 
   // Uncomment to change address. Default is 0x77
@@ -29,9 +30,10 @@ void setup() {
   BME280setup();
 
   // Begin Serial monitor output for debugging
-  Serial.begin(9600);
+  
 
   Serial.println("BME280 Interface Example.");
+  delay(5000);
 }
 
 void loop() {
@@ -48,10 +50,10 @@ void loop() {
 
 
   // Print the data to Serial output!
-  Serial.print("Temperature: ");
+  Serial.print(" Temperature: ");
   Serial.print(temp);
 
-  Serial.print("Pressure: ");
+  Serial.print(" Pressure: ");
   Serial.println(press);
 
   Serial.print("Humidity: ");
