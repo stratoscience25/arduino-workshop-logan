@@ -68,15 +68,7 @@ void loop() {
   myFile = SD.open("data.csv", FILE_WRITE);
 
   // Print the data to myFile output!
-  myFile.print(",");
-  myFile.print(temp);
-
-  myFile.print(",");
-  myFile.println(press);
-
-
-  myFile.print(humid);
-
+  myFile.println(temp + "," + humid + "," + press)
   myFile.close();
   delay(1000);
 }
