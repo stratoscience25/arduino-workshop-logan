@@ -21,8 +21,9 @@
 #include <SPI.h>
 #include <SD.h>
 #include <TinyBME280.h>
+#include <floatToString.h>
+#include <String.h>
 File myFile;
-
 void setup() {
   
   // Open serial communications and wait for port to open:
@@ -42,8 +43,9 @@ void setup() {
 
   // open the file. note that only one file can be open at a time,
   // so you have to close this one before opening another.
-  
-
+  myFile = SD.open("data.csv", FILE_WRITE);
+  myFile.println("Temperature, Humidity, Pressure")
+  myFile.close()
 
   // re-open the file for reading:
   BME280setup();
@@ -59,16 +61,21 @@ void loop() {
 
   // Gives the temperature as a signed 32-bit integer in °C with a resolution of 0.01°C. So an output value of “5123” equals 51.23°C.
   float temp = BME280temperature() / 100;
-
+  String stemp;
+  stemp = String(temp);
   // Pives the pressure in Pa as an unsigned 32-bit integer, so an output value of “96386” equals 96386 Pa, or 963.86 hPa.
   float press = BME280pressure() / 100;
-
+  String spress;
+  spress = String(press);
   // Gives the humidity in %RH with a resolution of 0.01% RH, so an output value of “4653” represents 46.53 %RH.
   float humid = BME280humidity() / 100;
+  String shumid;
+  shumid = String(humid);
+
   myFile = SD.open("data.csv", FILE_WRITE);
 
   // Print the data to myFile output!
-  myFile.println(temp + "," + humid + "," + press)
+  myFile.println(stemp + "," + shumid + "," + spress);
   myFile.close();
   delay(1000);
 }
