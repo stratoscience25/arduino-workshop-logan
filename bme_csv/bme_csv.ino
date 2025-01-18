@@ -43,8 +43,8 @@ void setup() {
   // open the file. note that only one file can be open at a time,
   // so you have to close this one before opening another.
   myFile = SD.open("data.csv", FILE_WRITE);
-  myFile.println("Temperature, Humidity, Pressure")
-  myFile.close()
+  myFile.println("Temperature, Humidity, Pressure");
+  myFile.close();
 
   // re-open the file for reading:
   BME280setup();
@@ -76,5 +76,5 @@ void loop() {
   // Print the data to myFile output!
   myFile.println(stemp + "," + shumid + "," + spress);
   myFile.close();
-  delay(1000);
+  delay(100);
 }
