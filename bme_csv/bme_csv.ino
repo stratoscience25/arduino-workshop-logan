@@ -21,7 +21,6 @@
 #include <SPI.h>
 #include <SD.h>
 #include <TinyBME280.h>
-#include <floatToString.h>
 #include <String.h>
 File myFile;
 void setup() {
