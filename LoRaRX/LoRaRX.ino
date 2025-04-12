@@ -29,12 +29,12 @@ SoftwareSerialTX ss(6);
 
 
 // Blinky on receipt
-#define LED 13
+//#define LED 13
 
 void setup() {
   ss.begin(9600);
   
-  pinMode(LED, OUTPUT);
+ // pinMode(LED, OUTPUT);
   pinMode(RFM95_RST, OUTPUT);
   digitalWrite(RFM95_RST, HIGH);
   Serial.begin(9600);
@@ -92,7 +92,7 @@ void loop() {
     uint8_t len = sizeof(buf);
     if (rf95.recv(buf, &len)) {
       
-      digitalWrite(LED, HIGH);
+      //digitalWrite(LED, HIGH);
       Serial.print("Got: ");
       Serial.println((char*)buf);
       Serial.print("Id: ");
@@ -110,7 +110,21 @@ void loop() {
       
 
 
-      // open the file. note that only one file can be open at a time,
+
+      //delay(1000);
+      //delay(10);
+
+      // Send a reply
+      uint8_t data[] = "KC1VVU-002";
+      rf95.send(data, sizeof(data));
+      rf95.waitPacketSent();
+      Serial.println("Sent a reply");
+      //digitalWrite(LED, LOW);
+    } else {
+      Serial.println("Receive failed");
+    }
+
+          // open the file. note that only one file can be open at a time,
       // so you have to close this one before opening another.
       File dataFile = SD.open("DATALOG.txt", FILE_WRITE);
 
@@ -126,18 +140,6 @@ void loop() {
       else {
         Serial.println("error opening datalog.txt");
       }
-      //delay(1000);
-      //delay(10);
-
-      // Send a reply
-      uint8_t data[] = "KC1VVU-002";
-      rf95.send(data, sizeof(data));
-      rf95.waitPacketSent();
-      Serial.println("Sent a reply");
-      digitalWrite(LED, LOW);
-    } else {
-      Serial.println("Receive failed");
-    }
   }
 }
 
