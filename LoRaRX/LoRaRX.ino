@@ -25,16 +25,16 @@ char *i;
 
 // Singleton instance of the radio driver
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
-SoftwareSerialTX ss(6);
+//SoftwareSerialTX ss(6);
 
 
 // Blinky on receipt
 //#define LED 13
 
 void setup() {
-  ss.begin(9600);
-  
- // pinMode(LED, OUTPUT);
+  //ss.begin(9600);
+
+  // pinMode(LED, OUTPUT);
   pinMode(RFM95_RST, OUTPUT);
   digitalWrite(RFM95_RST, HIGH);
   Serial.begin(9600);
@@ -44,7 +44,8 @@ void setup() {
   if (!SD.begin(chipSelect)) {
     Serial.println("Card failed, or not present");
     // don't do anything more:
-    while (1);
+    while (1)
+      ;
   }
   Serial.println("card initialized.");
 
@@ -60,7 +61,7 @@ void setup() {
       ;
   }
   Serial.println("LoRa radio init OK!");
-  
+
 
   // Defaults after init are 434.0MHz, modulation GFSK_Rb250Fd250, +13dbM
   if (!rf95.setFrequency(RF95_FREQ)) {
@@ -77,37 +78,34 @@ void setup() {
   // If you are using RFM95/96/97/98 modules which uses the PA_BOOST transmitter pin, then
   // you can set transmitter powers from 5 to 23 dBm:
   rf95.setTxPower(23, false);
-  
 }
 
 void loop() {
   // make a string for assembling the data to log:
   String dataString = "";
 
-
-
   if (rf95.available()) {
     // Should be a message for us now
     uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
     uint8_t len = sizeof(buf);
     if (rf95.recv(buf, &len)) {
-      
+
       //digitalWrite(LED, HIGH);
       Serial.print("Got: ");
-      Serial.println((char*)buf);
+      Serial.println((char *)buf);
       Serial.print("Id: ");
-      char *id = extractId(buf,"#");
+      char *id = extractId(buf, "#");
       Serial.println(id);
       Serial.print("RSSI: ");
       Serial.println(rf95.lastRssi(), DEC);
-      
+
       dataString = (String)id;
 
-      for(i = id; *i != NULL; i++) {
-        ss.write(*i);
-      }
-      ss.write('\0');
-      
+      // for (i = id; *i != NULL; i++) {
+      //   ss.write(*i);
+      // }
+      // ss.write('\0');
+
 
 
 
@@ -120,17 +118,13 @@ void loop() {
       rf95.waitPacketSent();
       Serial.println("Sent a reply");
       //digitalWrite(LED, LOW);
-    } else {
-      Serial.println("Receive failed");
-    }
 
-          // open the file. note that only one file can be open at a time,
+      // open the file. note that only one file can be open at a time,
       // so you have to close this one before opening another.
       File dataFile = SD.open("DATALOG.txt", FILE_WRITE);
 
       // if the file is available, write to it:
       if (dataFile) {
-
         dataFile.println(dataString);
         dataFile.close();
         // print to the serial port too:
@@ -140,14 +134,17 @@ void loop() {
       else {
         Serial.println("error opening datalog.txt");
       }
+    } else {
+      Serial.println("Receive failed");
+    }
   }
 }
 
-int extractId(char in[80], const char delim[2]){
+int extractId(char in[80], const char delim[2]) {
   char *token;
 
   token = strtok(in, delim);
   token = strtok(NULL, delim);
 
-  return(token);
+  return (token);
 }
