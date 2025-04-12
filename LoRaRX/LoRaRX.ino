@@ -26,7 +26,7 @@ char *i;
 // Singleton instance of the radio driver
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
 SoftwareSerialTX ss(6);
-File dataFile;
+
 
 // Blinky on receipt
 #define LED 13
@@ -112,7 +112,7 @@ void loop() {
 
       // open the file. note that only one file can be open at a time,
       // so you have to close this one before opening another.
-      dataFile = SD.open("datalog.txt", FILE_WRITE);
+      File dataFile = SD.open("DATALOG.txt", FILE_WRITE);
 
       // if the file is available, write to it:
       if (dataFile) {
