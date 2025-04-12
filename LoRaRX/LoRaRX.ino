@@ -130,7 +130,7 @@ void loop() {
       //delay(10);
 
       // Send a reply
-      uint8_t data[] = "And hello back to you";
+      uint8_t data[] = "KC1VVU-002";
       rf95.send(data, sizeof(data));
       rf95.waitPacketSent();
       Serial.println("Sent a reply");
