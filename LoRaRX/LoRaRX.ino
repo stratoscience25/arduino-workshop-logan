@@ -21,7 +21,7 @@ char *i;
 #define RFM95_INT 3
 
 // Change to 434.0 or other frequency, must match RX's freq!
-#define RF95_FREQ 915.2
+#define RF95_FREQ 434.0
 
 // Singleton instance of the radio driver
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
@@ -101,7 +101,7 @@ void loop() {
       Serial.print("RSSI: ");
       Serial.println(rf95.lastRssi(), DEC);
       
-      dataString += (String)id;
+      dataString = (String)id;
 
       for(i = id; *i != NULL; i++) {
         ss.write(*i);
@@ -116,6 +116,7 @@ void loop() {
 
       // if the file is available, write to it:
       if (dataFile) {
+
         dataFile.println(dataString);
         dataFile.close();
         // print to the serial port too:
