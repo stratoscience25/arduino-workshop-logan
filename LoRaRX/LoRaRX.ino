@@ -77,7 +77,7 @@ void setup() {
   // The default transmitter power is 13dBm, using PA_BOOST.
   // If you are using RFM95/96/97/98 modules which uses the PA_BOOST transmitter pin, then
   // you can set transmitter powers from 5 to 23 dBm:
-  rf95.setTxPower(23, false);
+  //rf95.setTxPower(23, false);
 }
 
 void loop() {
@@ -121,7 +121,9 @@ void loop() {
 
       // open the file. note that only one file can be open at a time,
       // so you have to close this one before opening another.
-      File dataFile = SD.open("DATALOG.txt", FILE_WRITE);
+      File dataFile;
+      dataFile.close();
+      dataFile = SD.open("datalog.txt", FILE_WRITE);
 
       // if the file is available, write to it:
       if (dataFile) {
