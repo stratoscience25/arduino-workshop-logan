@@ -9,10 +9,12 @@
 
 #include <SPI.h>
 #include <RH_RF95.h>
+#include <SD.h>
 
 #define RFM95_CS 4
 #define RFM95_RST 2
 #define RFM95_INT 3
+const int chipSelect = 5;
 
 // Change to 434.0 or other frequency, must match RX's freq!
 #define RF95_FREQ 434.0
@@ -58,6 +60,16 @@ void setup()
   // If you are using RFM95/96/97/98 modules which uses the PA_BOOST transmitter pin, then 
   // you can set transmitter powers from 5 to 23 dBm:
   rf95.setTxPower(23, false);
+
+  Serial.print("Initializing SD card...");
+  // see if the card is present and can be initialized:
+  if (!SD.begin(chipSelect)) {
+    Serial.println("Card failed, or not present");
+    // don't do anything more:
+    while (1)
+      ;
+  }
+  Serial.println("card initialized.");
 }
 
 int16_t packetnum = 0;  // packet counter, we increment per xmission
@@ -67,7 +79,7 @@ void loop()
   Serial.println("Sending to rf95_server");
   // Send a message to rf95_server
   
-  char radiopacket[20] = "Hello World #      ";
+  char radiopacket[20] = " KC1VVU test       ";
   itoa(packetnum++, radiopacket+13, 10);
   Serial.print("Sending "); Serial.println(radiopacket);
   radiopacket[19] = 0;
@@ -83,6 +95,7 @@ void loop()
 
   Transmit_Counter++;
 
+  File dataFile = SD.open("datalog.txt", FILE_WRITE);
   Serial.println("Waiting for reply..."); delay(10);
   if (rf95.waitAvailableTimeout(1000))
   { 
@@ -92,7 +105,13 @@ void loop()
       Serial.print("Got reply: ");
       Serial.println((char*)buf);
       Serial.print("RSSI: ");
-      Serial.println(rf95.lastRssi(), DEC);    
+      Serial.println(rf95.lastRssi(), DEC);
+      dataFile.print((char*)buf);
+      dataFile.print(", ");
+      dataFile.print(packetnum);
+      dataFile.print(", ");
+      dataFile.println(rf95.lastRssi(), DEC); 
+      dataFile.close();   
     }
     else
     {
