@@ -8,12 +8,14 @@
 
 #include <SPI.h>
 #include <RH_RF95.h>
+#include <SD.h>
 
 #define RFM95_CS 4
 #define RFM95_RST 2
 #define RFM95_INT 3
+const int sdcs = 5;
 
-// Change to 434.0 or other frequency, must match RX's freq!
+// Change to 434.0 or other frequency, must match TX's freq!
 #define RF95_FREQ 434.0
 
 // Singleton instance of the radio driver
