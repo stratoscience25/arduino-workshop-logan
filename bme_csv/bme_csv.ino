@@ -24,19 +24,20 @@
 #include <String.h>
 File myFile;
 void setup() {
-  
+
   // Open serial communications and wait for port to open:
   Serial.begin(9600);
   while (!Serial) {
-    ; // wait for serial port to connect. Needed for native USB port only
+    ;  // wait for serial port to connect. Needed for native USB port only
   }
 
 
   Serial.print("Initializing SD card...");
 
-  if (!SD.begin(4)) {
+  if (!SD.begin(5)) {
     Serial.println("initialization failed!");
-    while (1);
+    while (1)
+      ;
   }
   Serial.println("initialization done.");
 
@@ -50,9 +51,6 @@ void setup() {
   BME280setup();
 
   // Begin myFile monitor output for debugging
-  
-
-
 }
 
 void loop() {

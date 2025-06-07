@@ -79,7 +79,7 @@ void loop()
   Serial.println("Sending to rf95_server");
   // Send a message to rf95_server
   
-  char radiopacket[20] = " KC1VVU test       ";
+  char radiopacket[20] = " KC1VVU test/      ";
   itoa(packetnum++, radiopacket+13, 10);
   Serial.print("Sending "); Serial.println(radiopacket);
   radiopacket[19] = 0;
@@ -97,6 +97,7 @@ void loop()
 
   File dataFile = SD.open("datalog.txt", FILE_WRITE);
   Serial.println("Waiting for reply..."); delay(10);
+
   if (rf95.waitAvailableTimeout(1000))
   { 
     // Should be a reply message for us now   
