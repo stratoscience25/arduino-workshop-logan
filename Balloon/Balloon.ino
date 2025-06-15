@@ -10,14 +10,14 @@
 #include <RH_RF95.h>
 #include <SD.h>
 #include <TinyBME280.h>
-#include <String.h>
+// #include <String.h>
 File myFile;
 #define RFM95_CS 4
 #define RFM95_RST 2
 #define RFM95_INT 3
-const int sdcs = 5;
-uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
-uint8_t len;
+#define sdcs 5
+uint8_t buf[64];
+
 bool received_packet = 0;
 #define TX_INTERVAL 5000
 // Change to 434.0 or other frequency, must match TX's freq!
@@ -61,7 +61,10 @@ void setup() {
       ;
   }
   Serial.print("Set Freq to: ");
-  Serial.println(RF95_FREQ);
+  // Serial.println(RF95_FREQ);
+  char freqStr[10];
+  dtostrf(RF95_FREQ, 6, 2, freqStr);  // width=6, precision=2
+  Serial.println(freqStr);
 
   // Defaults after init are 434.0MHz, 13dBm, Bw = 125 kHz, Cr = 4/5, Sf = 128chips/symbol, CRC on
 
@@ -81,9 +84,18 @@ void setup() {
 
   // open the file. note that only one file can be open at a time,
   // so you have to close this one before opening another.
+  // myFile = SD.open("data.csv", FILE_WRITE);
+  // myFile.println("Temperature, Humidity, Pressure, Packet ID");
+  // myFile.close();
+
+  // After successful SD init
+  rf95.sleep();  // Ensure radio is not holding SPI lines
   myFile = SD.open("data.csv", FILE_WRITE);
-  myFile.println("Temperature, Humidity, Pressure, Packet ID");
-  myFile.close();
+  if (myFile) {
+    myFile.println("Temperature, Humidity, Pressure, Packet ID");
+    myFile.close();
+  }
+  rf95.setModeRx();  // Re-enable radio listening
 
   BME280setup();
 }
@@ -94,41 +106,61 @@ void loop() {
   //delay(5000);
   // Gives the temperature as a signed 32-bit integer in °C with a resolution of 0.01°C. So an output value of “5123” equals 51.23°C.
   float temp = BME280temperature() / 100;
-  String stemp;
-  stemp = String(temp);
+  // String stemp;
+  // stemp = String(temp);
   // Pives the pressure in Pa as an unsigned 32-bit integer, so an output value of “96386” equals 96386 Pa, or 963.86 hPa.
   float press = BME280pressure() / 100;
-  String spress;
-  spress = String(press);
+  // String spress;
+  // spress = String(press);
   // Gives the humidity in %RH with a resolution of 0.01% RH, so an output value of “4653” represents 46.53 %RH.
   float humid = BME280humidity() / 100;
-  String shumid;
-  shumid = String(humid);
+  // String shumid;
+  // shumid = String(humid);
 
 
-/////////////////////////////sd code////////////////////////////////
+  /////////////////////////////sd code////////////////////////////////
+  // rf95.sleep(); // Ensure radio is not holding SPI lines
+  // myFile = SD.open("data.csv", FILE_WRITE);
 
+  // // Print the data to myFile output!
+  // //myFile.println(stemp + "," + shumid + "," + spress + "," + received_packet);
+  // myFile.println(temp);
+  // myFile.println(",");
+  // myFile.println(humid);
+  // myFile.println(",");
+  // myFile.println(press);
+  // myFile.println(",");
+  // myFile.println(received_packet);
+
+  // myFile.close();
+  // rf95.setModeRx(); // Re-enable radio listening
+  rf95.sleep();  // Release SPI
   myFile = SD.open("data.csv", FILE_WRITE);
-
-  // Print the data to myFile output!
-  myFile.println(stemp + "," + shumid + "," + spress + "," + received_packet);
-  myFile.close();
+  if (myFile) {
+    myFile.print(temp, 2);
+    myFile.print(",");
+    myFile.print(humid, 2);
+    myFile.print(",");
+    myFile.print(press, 2);
+    myFile.print(",");
+    myFile.println(received_packet);
+    myFile.close();
+  }
+  rf95.setModeRx();  // Resume radio
   received_packet = 0;
-  
-  
 }
 
 void SmartDelay(int ms) {
   unsigned long starttime = millis();
+  uint8_t len;
   while (millis() - starttime < ms) {
     if (rf95.available()) {
       // Should be a message for us now
 
       if (rf95.recv(buf, &len)) {
         received_packet = 1;
-        len = sizeof(buf);
+        //len = sizeof(buf);
         digitalWrite(LED, HIGH);
-        RH_RF95::printBuffer("Received: ", buf, len);
         Serial.print(F("Got: "));
         Serial.println((char*)buf);
         Serial.print(F("RSSI: "));

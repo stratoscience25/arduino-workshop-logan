@@ -9,7 +9,7 @@
 
 #include <SPI.h>
 #include <RH_RF95.h>
-#include <SD.h>
+// #include <SD.h>
 
 #define RFM95_CS 4
 #define RFM95_RST 2
@@ -61,15 +61,15 @@ void setup()
   // you can set transmitter powers from 5 to 23 dBm:
   rf95.setTxPower(23, false);
 
-  Serial.print("Initializing SD card...");
-  // see if the card is present and can be initialized:
-  if (!SD.begin(chipSelect)) {
-    Serial.println("Card failed, or not present");
-    // don't do anything more:
-    while (1)
-      ;
-  }
-  Serial.println("card initialized.");
+  // Serial.print("Initializing SD card...");
+  // // see if the card is present and can be initialized:
+  // if (!SD.begin(chipSelect)) {
+  //   Serial.println("Card failed, or not present");
+  //   // don't do anything more:
+  //   while (1)
+  //     ;
+  // }
+  // Serial.println("card initialized.");
 }
 
 int16_t packetnum = 0;  // packet counter, we increment per xmission
@@ -95,7 +95,7 @@ void loop()
 
   Transmit_Counter++;
 
-  File dataFile = SD.open("datalog.txt", FILE_WRITE);
+  // File dataFile = SD.open("datalog.txt", FILE_WRITE);
   Serial.println("Waiting for reply..."); delay(10);
 
   if (rf95.waitAvailableTimeout(1000))
@@ -107,12 +107,12 @@ void loop()
       Serial.println((char*)buf);
       Serial.print("RSSI: ");
       Serial.println(rf95.lastRssi(), DEC);
-      dataFile.print((char*)buf);
-      dataFile.print(", ");
-      dataFile.print(packetnum);
-      dataFile.print(", ");
-      dataFile.println(rf95.lastRssi(), DEC); 
-      dataFile.close();   
+      // dataFile.print((char*)buf);
+      // dataFile.print(", ");
+      // dataFile.print(packetnum);
+      // dataFile.print(", ");
+      // dataFile.println(rf95.lastRssi(), DEC); 
+      // dataFile.close();   
     }
     else
     {
