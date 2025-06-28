@@ -19,9 +19,12 @@ File myFile;
 uint8_t buf[64];
 
 bool received_packet = 0;
+int packet_id = 0;
 #define TX_INTERVAL 5000
 // Change to 434.0 or other frequency, must match TX's freq!
 #define RF95_FREQ 434.0
+ void SmartDelay(int); // function declaration
+
 
 // Singleton instance of the radio driver
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
@@ -33,7 +36,7 @@ void setup() {
   pinMode(LED, OUTPUT);
   pinMode(RFM95_RST, OUTPUT);
   digitalWrite(RFM95_RST, HIGH);
-
+ 
   while (!Serial)
     ;
   Serial.begin(9600);
@@ -137,27 +140,30 @@ void loop() {
   rf95.sleep();  // Release SPI
   myFile = SD.open("data.csv", FILE_WRITE);
   if (myFile) {
-    myFile.print(temp, 2);
-    myFile.print(",");
-    myFile.print(humid, 2);
-    myFile.print(",");
-    myFile.print(press, 2);
-    myFile.print(",");
-    myFile.println(received_packet);
-    myFile.close();
+    // myFile.print(temp, 2);
+    // myFile.print(",");
+    // myFile.print(humid, 2);
+    // myFile.print(",");
+    // myFile.print(press, 2);
+    // myFile.print(",");
+    // myFile.println(packet_id);
+    // myFile.close();
   }
   rf95.setModeRx();  // Resume radio
   received_packet = 0;
 }
 
 void SmartDelay(int ms) {
+  //Serial.println("smartdelay called");
   unsigned long starttime = millis();
   uint8_t len;
   while (millis() - starttime < ms) {
+    //Serial.println("smartdelay called1");
     if (rf95.available()) {
       // Should be a message for us now
-
+      //Serial.println("smartdelay available");
       if (rf95.recv(buf, &len)) {
+        //Serial.println("smartdelay called2");
         received_packet = 1;
         //len = sizeof(buf);
         digitalWrite(LED, HIGH);
@@ -165,6 +171,9 @@ void SmartDelay(int ms) {
         Serial.println((char*)buf);
         Serial.print(F("RSSI: "));
         Serial.println(rf95.lastRssi(), DEC);
+
+        packet_id = getId((char*)buf);
+        Serial.println("line 174");
 
         // Send a reply
         uint8_t data[] = " KC1VVU says hi";
@@ -177,4 +186,8 @@ void SmartDelay(int ms) {
       }
     }
   }
+}
+
+int getId(char* input) {
+  return 204;
 }
