@@ -1,1 +1,1 @@
-# arduino-workshop-logan
+# StratoScience Lab
