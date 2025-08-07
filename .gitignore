@@ -64,3 +64,6 @@ fp-info-cache
 *.exe
 *.out
 *.app
+# Mac and libreoffice stuff
+*.~lock
+.DS_Store
