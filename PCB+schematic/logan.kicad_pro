@@ -502,10 +502,10 @@
       "gencad": "",
       "idf": "",
       "netlist": "",
-      "plot": "./",
+      "plot": "../Ham xposition presentation/",
       "pos_files": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "logan.step",
       "svg": "",
       "vrml": ""
     },
